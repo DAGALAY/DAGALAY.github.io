@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="施工安全问答助手 - 建筑施工从业人员的AI安全问答工具">
+  <title>施工安全问答助手</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ========== 顶部标题栏 ========== -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="菜单">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="header-logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect x="4" y="4" width="24" height="24" rx="3" fill="#1a3a5c"/>
+          <path d="M16 8L22 12V20L16 24L10 20V12L16 8Z" stroke="#f5a623" stroke-width="2" fill="none"/>
+          <path d="M16 12L19 14V18L16 20L13 18V14L16 12Z" fill="#f5a623"/>
+        </svg>
+      </div>
+      <div class="header-title">
+        <h1>施工安全问答助手</h1>
+        <p class="header-subtitle">建筑施工安全规范查询 · 隐患排查 · 安全考试备考 · 工程计算</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-badge" title="适配场景">
+        <span class="badge-item">施工人员</span>
+        <span class="badge-item">土建学生</span>
+        <span class="badge-item">安全员</span>
+      </div>
+      <div class="api-status" id="apiStatus">
+        <span class="status-dot"></span>
+        <span class="status-text">检测中</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== 主体布局 ========== -->
+  <div class="app-body">
+
+    <!-- ========== 左侧设置区 ========== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-content">
+
+        <!-- 功能模块切换 -->
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">功能模块</h3>
+          <div class="module-tabs">
+            <button class="module-tab active" data-module="chat">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>智能问答</span>
+            </button>
+            <button class="module-tab" data-module="image">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span>图片分析</span>
+            </button>
+            <button class="module-tab" data-module="units">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 16V4M7 4L3 8M7 4l4 4"/>
+                <path d="M17 8v12M17 20l4-4M17 20l-4-4"/>
+              </svg>
+              <span>单位换算</span>
+            </button>
+            <button class="module-tab" data-module="calculator">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="2" width="16" height="20" rx="2"/>
+                <line x1="8" y1="6" x2="16" y2="6"/>
+                <line x1="8" y1="10" x2="8" y2="10"/>
+                <line x1="12" y1="10" x2="12" y2="10"/>
+                <line x1="16" y1="10" x2="16" y2="10"/>
+                <line x1="8" y1="14" x2="8" y2="14"/>
+                <line x1="12" y1="14" x2="12" y2="14"/>
+                <line x1="16" y1="14" x2="20" y2="14"/>
+                <line x1="8" y1="18" x2="8" y2="18"/>
+                <line x1="12" y1="18" x2="12" y2="18"/>
+                <line x1="16" y1="18" x2="20" y2="18"/>
+              </svg>
+              <span>工程计算</span>
+            </button>
+            <button class="module-tab" data-module="questions">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"/>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
+              <span>题目生成</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 系统设置 -->
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">系统设置</h3>
+          
+          <!-- API Key 设置 -->
+          <div class="setting-item">
+            <label class="setting-label">
+              API Key
+              <span class="setting-hint">阿里云 DashScope</span>
+            </label>
+            <div class="api-key-input-group">
+              <input type="password" id="apiKeyInput" class="setting-input" placeholder="输入 API Key..." />
+              <button class="btn-icon" id="toggleApiKeyVisibility" title="显示/隐藏">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <button class="btn-small btn-primary" id="saveApiKey">保存</button>
+          </div>
+
+          <!-- 模型选择 -->
+          <div class="setting-item">
+            <label class="setting-label">模型选择</label>
+            <select id="modelSelect" class="setting-input">
+              <option value="qwen-plus">qwen-plus (推荐)</option>
+              <option value="qwen-max">qwen-max (最强)</option>
+              <option value="qwen-turbo">qwen-turbo (快速)</option>
+              <option value="qwen-vl-plus">qwen-vl-plus (视觉)</option>
+              <option value="qwen-vl-max">qwen-vl-max (视觉最强)</option>
+            </select>
+          </div>
+
+          <!-- 系统提示词 -->
+          <div class="setting-item">
+            <label class="setting-label">
+              系统提示词
+              <span class="setting-hint">设定模型角色</span>
+            </label>
+            <select id="presetPromptSelect" class="setting-input">
+              <option value="">-- 选择预设角色 --</option>
+              <option value="engineer">资深安全工程师</option>
+              <option value="teacher">施工安全讲师</option>
+              <option value="examiner">考场阅卷老师</option>
+              <option value="calculator">工程计算专员</option>
+              <option value="inspector">现场安全检查员</option>
+              <option value="custom">自定义</option>
+            </select>
+            <textarea id="systemPromptInput" class="setting-textarea" rows="4" placeholder="输入系统提示词，定义AI的角色和行为..."></textarea>
+          </div>
+
+          <!-- 知识库开关 -->
+          <div class="setting-item setting-toggle">
+            <label class="setting-label">
+              知识库增强
+              <span class="setting-hint">建筑施工安全规范</span>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="knowledgeBaseToggle" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 历史对话 -->
+        <div class="sidebar-section sidebar-history">
+          <div class="sidebar-title-row">
+            <h3 class="sidebar-title">历史对话</h3>
+            <button class="btn-text" id="newChatBtn">+ 新建</button>
+          </div>
+          <div class="conversation-list" id="conversationList">
+            <div class="conversation-empty">暂无历史对话</div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- ========== 遮罩层（移动端） ========== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ========== 主内容区 ========== -->
+    <main class="main-content">
+
+      <!-- 智能问答模块 -->
+      <div class="module-panel active" id="module-chat">
+        <div class="chat-area">
+          <div class="chat-messages" id="chatMessages">
+            <div class="welcome-screen">
+              <div class="welcome-icon">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                  <rect x="8" y="8" width="48" height="48" rx="6" fill="#1a3a5c"/>
+                  <path d="M32 16L44 24V40L32 48L20 40V24L32 16Z" stroke="#f5a623" stroke-width="3" fill="none"/>
+                  <path d="M32 24L38 28V36L32 40L26 36V28L32 24Z" fill="#f5a623"/>
+                </svg>
+              </div>
+              <h2>施工安全问答助手</h2>
+              <p>欢迎使用施工安全智能问答系统，请输入您的施工安全问题，我将为您提供专业解答。</p>
+              <div class="welcome-suggestions">
+                <div class="suggestion-card" data-suggestion="脚手架搭设有哪些安全要求？">
+                  <span class="suggestion-icon">📋</span>
+                  <span>脚手架搭设安全要求</span>
+                </div>
+                <div class="suggestion-card" data-suggestion="高处作业的安全防护措施有哪些？">
+                  <span class="suggestion-icon">🛡️</span>
+                  <span>高处作业安全防护</span>
+                </div>
+                <div class="suggestion-card" data-suggestion="施工现场临时用电安全规范是什么？">
+                  <span class="suggestion-icon">⚡</span>
+                  <span>临时用电安全规范</span>
+                </div>
+                <div class="suggestion-card" data-suggestion="深基坑施工安全注意事项有哪些？">
+                  <span class="suggestion-icon">🏗️</span>
+                  <span>深基坑施工安全</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 图片分析模块 -->
+      <div class="module-panel" id="module-image">
+        <div class="chat-area">
+          <div class="chat-messages" id="imageChatMessages">
+            <div class="welcome-screen">
+              <div class="welcome-icon">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                  <rect x="8" y="8" width="48" height="48" rx="6" fill="#1a3a5c"/>
+                  <rect x="18" y="18" width="28" height="28" rx="2" stroke="#f5a623" stroke-width="3" fill="none"/>
+                  <circle cx="26" cy="26" r="3" fill="#f5a623"/>
+                  <polyline points="42,38 34,30 22,42" stroke="#f5a623" stroke-width="3" fill="none"/>
+                </svg>
+              </div>
+              <h2>图片智能分析</h2>
+              <p>上传施工现场照片、安全隐患图片、施工图纸或考题截图，AI将智能识别并分析图片内容。</p>
+              <div class="image-suggestions">
+                <div class="img-sugg-item">📷 施工现场安全隐患排查</div>
+                <div class="img-sugg-item">📐 施工图纸问题解读</div>
+                <div class="img-sugg-item">📝 考题截图考点分析</div>
+                <div class="img-sugg-item">⚠️ 违规操作识别</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 单位换算模块 -->
+      <div class="module-panel" id="module-units">
+        <div class="units-container">
+          <div class="units-header">
+            <h2>工程单位换算</h2>
+            <p>长度 · 面积 · 体积 · 重量 · 压强 · 工程量</p>
+          </div>
+          <div class="units-category-tabs" id="unitsCategoryTabs">
+            <button class="units-cat-tab active" data-cat="length">长度</button>
+            <button class="units-cat-tab" data-cat="area">面积</button>
+            <button class="units-cat-tab" data-cat="volume">体积</button>
+            <button class="units-cat-tab" data-cat="weight">重量</button>
+            <button class="units-cat-tab" data-cat="pressure">压强</button>
+            <button class="units-cat-tab" data-cat="force">力</button>
+          </div>
+          <div class="units-converter" id="unitsConverter">
+            <!-- 动态生成 -->
+          </div>
+          <div class="units-result" id="unitsResult">
+            <div class="units-result-table" id="unitsResultTable"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 工程计算模块 -->
+      <div class="module-panel" id="module-calculator">
+        <div class="calc-container">
+          <div class="calc-header">
+            <h2>工程计算工具</h2>
+            <p>脚手架参数 · 荷载计算 · 基础工程量 · 施工配比</p>
+          </div>
+          <div class="calc-type-tabs" id="calcTypeTabs">
+            <button class="calc-tab active" data-calc="scaffold">脚手架参数</button>
+            <button class="calc-tab" data-calc="load">荷载计算</button>
+            <button class="calc-tab" data-calc="foundation">基础工程量</button>
+            <button class="calc-tab" data-calc="mixratio">施工配比</button>
+          </div>
+          <div class="calc-form-area" id="calcFormArea">
+            <!-- 动态生成 -->
+          </div>
+          <div class="calc-result-area" id="calcResultArea"></div>
+        </div>
+      </div>
+
+      <!-- 题目生成模块 -->
+      <div class="module-panel" id="module-questions">
+        <div class="questions-container">
+          <div class="questions-header">
+            <h2>施工安全题目生成</h2>
+            <p>自动生成 · 智能批改 · 考点解析</p>
+          </div>
+          <div class="questions-gen-panel">
+            <div class="questions-gen-controls">
+              <div class="gen-control">
+                <label>题型</label>
+                <select id="questionType">
+                  <option value="choice">选择题</option>
+                  <option value="judge">判断题</option>
+                  <option value="short">简答题</option>
+                  <option value="practice">实操问答题</option>
+                  <option value="mixed">混合题型</option>
+                </select>
+              </div>
+              <div class="gen-control">
+                <label>题数</label>
+                <select id="questionCount">
+                  <option value="3">3 题</option>
+                  <option value="5" selected>5 题</option>
+                  <option value="10">10 题</option>
+                </select>
+              </div>
+              <div class="gen-control">
+                <label>知识点方向</label>
+                <select id="questionTopic">
+                  <option value="">综合</option>
+                  <option value="脚手架安全">脚手架安全</option>
+                  <option value="高处作业">高处作业</option>
+                  <option value="临时用电">临时用电</option>
+                  <option value="基坑工程">基坑工程</option>
+                  <option value="模板工程">模板工程</option>
+                  <option value="起重吊装">起重吊装</option>
+                  <option value="消防安全">消防安全</option>
+                  <option value="个人防护">个人防护</option>
+                </select>
+              </div>
+              <div class="gen-control">
+                <label>难度</label>
+                <select id="questionDifficulty">
+                  <option value="简单">简单</option>
+                  <option value="中等" selected>中等</option>
+                  <option value="较难">较难</option>
+                </select>
+              </div>
+              <button class="btn-primary btn-gen" id="generateQuestionsBtn">生成题目</button>
+            </div>
+          </div>
+          <div class="questions-display" id="questionsDisplay"></div>
+          <div class="questions-analysis" id="questionsAnalysis"></div>
+        </div>
+      </div>
+
+      <!-- ========== 底部输入区 ========== -->
+      <div class="input-area" id="inputArea">
+        <div class="input-container">
+          <div class="input-wrapper">
+            <button class="input-btn input-upload-btn" id="uploadImageBtn" title="上传图片">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <input type="file" id="imageFileInput" accept="image/*" hidden>
+            </button>
+            <div class="image-preview-bar" id="imagePreviewBar"></div>
+            <textarea 
+              id="messageInput" 
+              class="message-input" 
+              placeholder="输入施工安全问题..." 
+              rows="1"
+            ></textarea>
+            <button class="input-btn input-send-btn" id="sendBtn" title="发送">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+            <button class="input-btn input-clear-btn" id="clearChatBtn" title="清空对话">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ========== 确认弹窗 ========== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-content">
+        <h3 class="modal-title" id="modalTitle">确认操作</h3>
+        <p class="modal-message" id="modalMessage">确定要执行此操作吗？</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-small btn-secondary" id="modalCancel">取消</button>
+        <button class="btn-small btn-danger" id="modalConfirm">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 加载提示 ========== -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <p class="loading-text" id="loadingText">正在处理...</p>
+  </div>
+
+  <!-- ========== 消息提示 ========== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- 脚本 -->
+  <script src="js/knowledge-data.js"></script>
+  <script src="js/units.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
